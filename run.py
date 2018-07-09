@@ -1,8 +1,10 @@
 import requests
+import time
 
 import config
 import preferences
 
+from random import randint
 from auth import cookie, api_key, user_agent, center_id
 
 
@@ -103,10 +105,13 @@ def get_preferred_availability_status():
             else:
                 print("Class already booked! WTF am I running here for? Fix me!")
 
+        return class_booked
+
 
 def book_class_using_id(class_id):
     print("I was going to book, but remembered that I haven't been implemented yet :/ Class ID: {}".format(class_id))
-    book = False
+    # To really book or to just do a dry run
+    book = True
 
     if book:
         booking_url = config.book_class_url.format(class_id)
@@ -116,6 +121,17 @@ def book_class_using_id(class_id):
 
     return class_id
 
+def try_fav_booking():
+    is_booked = False
+
+    while not is_booked:
+        is_booked = get_preferred_availability_status()
+        time.sleep(randint(10, 35))
+
+    print("Class booked! Exiting..")
+
+
 
 if __name__ == "__main__":
-    get_preferred_availability_status()
+    try_fav_booking()
+    # get_preferred_availability_status()
