@@ -124,12 +124,16 @@ def book_class_using_id(class_id):
 def try_fav_booking():
     is_booked = False
 
+    i = 0
     while not is_booked:
         is_booked = get_preferred_availability_status()
-        time.sleep(randint(10, 35))
 
-    print("Class booked! Exiting..")
+        sleep_time = randint(5, 20)*60
+        print("\n\nSleeping for {} minutes\n\n\n\n".format(sleep_time//60))
+        time.sleep(sleep_time)
+        i += 1
 
+    print("Class booked! {} attempts made. Do good with your health!\nExiting..".format(i))
 
 
 if __name__ == "__main__":
