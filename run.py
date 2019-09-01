@@ -101,6 +101,23 @@ def get_preferred_availability_status():
             for preferred_class_name in preferred_classes:
                 if not class_booked:
                     if preferred_class_name in available_classes_id_map:
+                        # Make sure you're not booking the class at 6:55am for a 7am class
+                        preferred_hour = preferred_time[0:preferred_time.find(":")]
+                        preferred_minute = preferred_time[preferred_time.find(":") + 1:-1][0:2]
+
+                        arrow_ts_at_preferred_time = arrow.now().replace(hour=preferred_hour, minute=preferred_minute)
+
+                        secs_to_class_start = arrow_ts_at_preferred_time.timestamp - int(time.time())
+
+                        if secs_to_class_start > preferences.booking_ban_before_class_start_time:
+                            print("Booking your preferred class of {} for {}".format(
+                                preferred_class_name,
+                                preferred_time
+                            ), flush=True)
+                        else:
+                            print("Less than 3 hours before class starts, not booking", flush=True)
+                            continue
+
                         print("Booking your preferred class of {} for {}".format(
                             preferred_class_name,
                             preferred_time
@@ -163,9 +180,10 @@ def try_in_randomized_time():
             # if t.hour >= 22, Booked for the new day too!
             print("Class booked! {} attempts made. Do good with your health!\nExiting..".format(i), flush=True)
 
-            print("\n\nSleeping for {} minutes. Gonna wake up at: {}\n\n".format(sleep_time // 60,
-                                                                             arrow_ts_near_next_schedule),
-                  flush=True)
+            print("\n\nSleeping for {} minutes. Gonna wake up at: {}\n\n".format(
+                sleep_time // 60,
+                arrow_ts_near_next_schedule),
+                flush=True)
             time.sleep(sleep_time)
             print("\n\nTrying to book next day, Master!\n\n\n\n", flush=True)
             i = 0
